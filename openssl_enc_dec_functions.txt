@@ -1,0 +1,22 @@
+dgst
+	openssl dgst -sha256 -sign privkey.pem -out input_message.tar.gz.sig input_message.tar.gz        #sign
+	openssl dgst -sha256 -verify pubkey.pem -signature input_message.tar.gz.sig input_message.tar.gz #verify
+
+enc
+	openssl enc -aes-256-cbc -salt -in file.txt -out file.txt.enc [-k PASS]   #encrypt
+	openssl enc -aes-256-cbc -d -in file.txt.enc -out file.txt [-k PASS]      #decrypt
+
+base64
+	openssl base64 -in file.txt -out file.txt.base64                          #base64 encoding
+	openssl base64 -d -in file.txt.base64 -out file.txt                       #base64 decoding
+
+ecparam
+	openssl ecparam -list_curves                                           #list all ECC curves
+	openssl ecparam -name secp256k1 -genkey -noout -out secp256k1-key.pem  #create key for curve secp256k1
+
+passwd
+	openssl passwd -1 -salt alphanumeric MyPassword   #create shadow-style password
+
+rand
+	openssl rand -out random-data.bin 64              #create 64bytes random data
+	head -c 64 /dev/urandom | openssl enc -base64     #get 64 random bytes from urandom and base64 encode

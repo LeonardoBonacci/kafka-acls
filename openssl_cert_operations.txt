@@ -1,0 +1,33 @@
+s_client
+	openssl s_client -connect qualys.com:443 < /dev/null
+	openssl s_client -showcerts -connect www.google.com:443 < /dev/null     #show all inter. certs too
+	openssl s_client -connect -tls1_2 qualys.com:443 < /dev/null 	       #connect using TLSv1.2 only
+
+x509
+	openssl x509 -in www.google.com.crt -noout –text  #decode the crt file
+	openssl s_client -connect google.com:443 < /dev/null 2>/dev/null | openssl x509  -in /dev/stdin -noout –text  #take input from stdin spit by s_client
+	openssl s_client -connect google.com:443 < /dev/null 2>/dev/null | openssl x509 –noout –dates #check expiry date
+
+genrsa/rsa
+	openssl genrsa -out mysite.key 4096                  #generate 4096 bit rsa key
+	openssl rsa -noout -text -check -in mysite.key       #display the private key components
+	openssl rsa -in mysite.key -pubout > mysite.key.pub  #extract public key
+	openssl rsa -in mysite.key.pub -pubin -text –noout   #display the public key components
+
+req
+	openssl req -new -key mysite.key -out mysite.csr  #new CSR, send this to CA for signing
+	openssl req -x509 -newkey rsa:4096 -keyout mysite.key -out mysite.crt -days 365 #self signed cert
+
+s_server
+	openssl s_server -cert mycert.crt -key mysite.key -www -accept 4443 #start ssl server on port 4443
+
+ciphers
+	openssl ciphers -v ['DHE-RSA-AES256-SHA'] #displays all without a cipher arguement
+
+crl
+	curl -s http://pki.google.com/GIAG2.crl  | openssl crl -inform DER -text -noout -in /dev/stdin
+
+Miscellaneous 
+	openssl x509 -noout -modulus mysite.crt | openssl sha256  #all md5sums should be 
+	openssl req -noout -modulus mysite.csr | openssl sha256   #the same if they belong
+	openssl rsa -noout -modulus mysite.key | openssl sha256   #to the same website
